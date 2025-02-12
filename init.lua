@@ -102,7 +102,7 @@ vim.g.have_nerd_font = false
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -131,9 +131,6 @@ vim.opt.smartcase = true
 -- Keep signcolumn on by default
 vim.opt.signcolumn = 'yes'
 
--- Decrease update time
-vim.opt.updatetime = 250
-
 -- Decrease mapped sequence wait time
 -- Displays which-key popup sooner
 vim.opt.timeoutlen = 300
@@ -157,8 +154,47 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- MY SET
+--fix temux colors
+vim.opt.termguicolors = true
+
+-- 4 tab indent
+vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = true
+
+-- no line wrap
+vim.opt.wrap = false
+
+-- min scorll buf
+vim.opt.scrolloff = 8
+
+-- updatetime
+vim.opt.updatetime = 50
+
+-- fat cursor
+vim.opt.guicursor = 'n-v-i-c:block-Cursor'
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
+
+-- My keymaps
+-- netrw
+vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
+-- paste the same over and over
+vim.keymap.set('x', '<leader>p', [["_dP]])
+-- move highlighed text around
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
+-- keep cursor in place when page up and down
+vim.keymap.set('n', '<C-d>', '<C-d>zz')
+vim.keymap.set('n', '<C-u>', '<C-u>zz')
+-- search and replace the current word
+vim.keymap.set('n', '<leader>ws', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+-- quickfix list next and prev
+--vim.api.nvim_set_keymap('n', '<C-j>', ':cnext<CR>', { noremap = true, silent = true })
+--vim.api.nvim_set_keymap('n', '<C-k>', ':cprev<CR>', { noremap = true, silent = true })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -256,6 +292,146 @@ require('lazy').setup({
     },
   },
 
+  --markdown
+  -- install with yarn or npm
+  {
+    'iamcco/markdown-preview.nvim',
+    cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
+    build = 'cd app && npm install',
+    init = function()
+      vim.g.mkdp_filetypes = { 'markdown' }
+    end,
+    ft = { 'markdown' },
+  },
+
+  --harpoon
+  {
+    'theprimeagen/harpoon',
+    branch = 'harpoon2',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      require('harpoon'):setup()
+    end,
+    keys = {
+      {
+        '<leader>a',
+        function()
+          require('harpoon'):list():add()
+        end,
+        desc = 'harpoon file',
+      },
+      {
+        '<C-e>',
+        function()
+          local harpoon = require 'harpoon'
+          harpoon.ui:toggle_quick_menu(harpoon:list())
+        end,
+        desc = 'harpoon quick menu',
+      },
+      {
+        '<C-h>',
+        function()
+          require('harpoon'):list():select(1)
+        end,
+        desc = 'harpoon to file 1',
+      },
+      {
+        '<C-t>',
+        function()
+          require('harpoon'):list():select(2)
+        end,
+        desc = 'harpoon to file 2',
+      },
+      {
+        '<C-n>',
+        function()
+          require('harpoon'):list():select(3)
+        end,
+        desc = 'harpoon to file 3',
+      },
+      {
+        '<C-s>',
+        function()
+          require('harpoon'):list():select(4)
+        end,
+        desc = 'harpoon to file 4',
+      },
+      {
+        '<leader>5',
+        function()
+          require('harpoon'):list():select(5)
+        end,
+        desc = 'harpoon to file 5',
+      },
+    },
+  },
+  -- supermaven
+  {
+    'supermaven-inc/supermaven-nvim',
+    config = function()
+      require('supermaven-nvim').setup {}
+    end,
+  },
+  -- undo tree
+  {
+    "mbbill/undotree",
+    keys = {
+      { "<leader>u", "<cmd>UndotreeToggle<CR>", desc = "Toggle UndoTree" },
+    },
+    config = function()
+      vim.g.undotree_WindowLayout = 3
+    end,
+  },
+  -- trobule
+  {
+    'folke/trouble.nvim',
+    opts = {}, -- for default options, refer to the configuration section for custom setup.
+    cmd = 'Trouble',
+    keys = {
+      {
+        '<leader>xx',
+        '<cmd>Trouble diagnostics toggle<cr>',
+        desc = 'Diagnostics (Trouble)',
+      },
+      {
+        '<leader>xX',
+        '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
+        desc = 'Buffer Diagnostics (Trouble)',
+      },
+      {
+        '<leader>cs',
+        '<cmd>Trouble symbols toggle focus=false<cr>',
+        desc = 'Symbols (Trouble)',
+      },
+      {
+        '<leader>cl',
+        '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
+        desc = 'LSP Definitions / references / ... (Trouble)',
+      },
+      {
+        '<leader>xL',
+        '<cmd>Trouble loclist toggle<cr>',
+        desc = 'Location List (Trouble)',
+      },
+      {
+        '<leader>xQ',
+        '<cmd>Trouble qflist toggle<cr>',
+        desc = 'Quickfix List (Trouble)',
+      },
+    },
+  },
+  -- tailwind-tools.lua
+  {
+    'luckasRanarison/tailwind-tools.nvim',
+    name = 'tailwind-tools',
+    build = ':UpdateRemotePlugins',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-telescope/telescope.nvim', -- optional
+      'neovim/nvim-lspconfig', -- optional
+    },
+    opts = {}, -- your configuration
+  },
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
   -- This is often very useful to both group configuration, as well as handle
@@ -605,19 +781,23 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
+        clangd = {},
+        gopls = {},
+        pyright = {},
+        rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        -- tsserver = {},
-        --
-
+        ts_ls = {},
+        css_variables = {},
+        cssls = {},
+        cssmodules_ls = {},
+        emmet_language_server = {},
+        emmet_ls = {},
+        java_language_server = {},
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -644,7 +824,12 @@ require('lazy').setup({
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
+      local ensure_installed = vim.tbl_keys(servers)
+
+      -- Remove `lsp_in_go` from the list so it's not managed by mason-tool-installer
+      ensure_installed = vim.tbl_filter(function(server)
+        return server ~= 'lsp_in_go'
+      end, ensure_installed)
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
       })
@@ -951,6 +1136,141 @@ require('lazy').setup({
     },
   },
 })
+
+--[[
+--
+--
+--]]
+
+vim.filetype.add {
+  extension = {
+    lox = 'lox',
+  },
+}
+
+local function on_attach(client, bufnr)
+  -- Define key mappings specific to LSP-related commands
+  local function map(keys, func, desc, mode)
+    mode = mode or 'n'
+    vim.keymap.set(mode, keys, func, { buffer = bufnr, desc = 'LSP: ' .. desc })
+  end
+
+  -- Mappings for LSP actions
+  map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+  map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+  map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+  map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+  map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+  map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+  map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+  map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
+  map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+
+  -- Highlight references on hover, clear on move
+  if client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+    local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
+    vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+      buffer = bufnr,
+      group = highlight_augroup,
+      callback = vim.lsp.buf.document_highlight,
+    })
+    vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+      buffer = bufnr,
+      group = highlight_augroup,
+      callback = vim.lsp.buf.clear_references,
+    })
+  end
+
+  -- Toggle inlay hints
+  if client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+    map('<leader>th', function()
+      vim.lsp.inlay_hint(bufnr, not vim.lsp.inlay_hint.is_enabled(bufnr))
+    end, '[T]oggle Inlay [H]ints')
+  end
+end
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'lox', -- Trigger for .lox filetypes
+  callback = function()
+    -- Start the LSP client for .lox files if not already started
+    local test_client = vim.lsp.start_client {
+      name = 'lox_lsp',
+      cmd = { '/home/moayed/personal/lox_lsp_first/main' },
+      on_attach = on_attach,
+    }
+
+    if not test_client then
+      vim.notify 'Lox LSP client could not start'
+      return
+    end
+
+    vim.lsp.buf_attach_client(0, test_client)
+  end,
+})
+
+local function stop_lsp_client_by_name(client_name)
+  local active_clients = vim.lsp.get_active_clients()
+  for _, client in ipairs(active_clients) do
+    if client.name == client_name then
+      client.stop()
+      print('Stopped LSP client: ' .. client_name)
+      return
+    end
+  end
+  print('LSP client not found: ' .. client_name)
+end
+
+-- Command to stop LSP client by name
+vim.api.nvim_create_user_command('StopLspClient', function(opts)
+  stop_lsp_client_by_name(opts.args)
+end, {
+  nargs = 1, -- Require exactly one argument (the client name)
+  desc = 'Stop an LSP client by name',
+})
+
+-- Command to comment js for working with gsap
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = '*.js',
+  callback = function()
+    local lines = vim.api.nvim_buf_get_lines(0, 0, 2, false)
+
+    -- Check and comment the first line if needed
+    if not lines[1]:match '^//' then
+      lines[1] = '// ' .. lines[1]
+    end
+
+    -- Check and comment the second line if needed
+    if #lines >= 2 and not lines[2]:match '^//' then
+      lines[2] = '// ' .. lines[2]
+    end
+
+    -- Update the buffer with modified lines
+    vim.api.nvim_buf_set_lines(0, 0, 2, false, lines)
+  end,
+})
+
+-- Command to uncomment the first two lines in JS files
+vim.api.nvim_create_user_command('UncommentJS', function()
+  local lines = vim.api.nvim_buf_get_lines(0, 0, 2, false)
+
+  -- Uncomment the first line if it's commented
+  if lines[1]:match '^//' then
+    -- Remove the comment and leading whitespace
+    lines[1] = lines[1]:sub(3):gsub('^%s+', '')
+  end
+
+  -- Uncomment the second line if it's commented
+  if #lines >= 2 and lines[2]:match '^//' then
+    -- Remove the comment and leading whitespace
+    lines[2] = lines[2]:sub(3):gsub('^%s+', '')
+  end
+
+  -- Update the buffer with modified lines
+  vim.api.nvim_buf_set_lines(0, 0, 2, false, lines)
+end, {})
+
+-- Bind the command to a key combination
+vim.api.nvim_set_keymap('n', '<leader>rm', ':UncommentJS<CR>', { noremap = true, silent = true })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
