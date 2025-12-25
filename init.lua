@@ -304,6 +304,26 @@ require('lazy').setup({
     ft = { 'markdown' },
   },
 
+  -- my c json foramt
+  {
+    'neet-007/stringify_json',
+    build = 'make',
+    config = function()
+      vim.keymap.set('v', '<leader>sj', require('stringify_json').ProcessVisualSelection, { desc = 'Process text with binary' })
+    end,
+    -- Custom clean function to run uninstall
+    clean = function()
+      vim.fn.system 'make uninstall'
+    end,
+  },
+
+  {
+    dir = '~/personal/rfc_plugin.nvim/',
+    config = function()
+      require 'rfc'
+    end,
+  },
+
   --harpoon
   {
     'theprimeagen/harpoon',
@@ -365,6 +385,13 @@ require('lazy').setup({
       },
     },
   },
+  -- live-preview
+  {
+    'brianhuster/live-preview.nvim',
+    dependencies = {
+      'nvim-telescope/telescope.nvim',
+    },
+  },
   -- supermaven
   {
     'supermaven-inc/supermaven-nvim',
@@ -374,9 +401,9 @@ require('lazy').setup({
   },
   -- undo tree
   {
-    "mbbill/undotree",
+    'mbbill/undotree',
     keys = {
-      { "<leader>u", "<cmd>UndotreeToggle<CR>", desc = "Toggle UndoTree" },
+      { '<leader>u', '<cmd>UndotreeToggle<CR>', desc = 'Toggle UndoTree' },
     },
     config = function()
       vim.g.undotree_WindowLayout = 3
@@ -785,6 +812,7 @@ require('lazy').setup({
         gopls = {},
         pyright = {},
         rust_analyzer = {},
+        elixirls = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -795,6 +823,7 @@ require('lazy').setup({
         css_variables = {},
         cssls = {},
         cssmodules_ls = {},
+        tailwindcss = {},
         emmet_language_server = {},
         emmet_ls = {},
         java_language_server = {},
@@ -1142,6 +1171,9 @@ require('lazy').setup({
 --
 --]]
 
+-- lsp loggin
+vim.lsp.set_log_level 'warn'
+
 vim.filetype.add {
   extension = {
     lox = 'lox',
@@ -1228,6 +1260,7 @@ end, {
   desc = 'Stop an LSP client by name',
 })
 
+--[[
 -- Command to comment js for working with gsap
 vim.api.nvim_create_autocmd('BufWritePre', {
   pattern = '*.js',
@@ -1268,6 +1301,7 @@ vim.api.nvim_create_user_command('UncommentJS', function()
   -- Update the buffer with modified lines
   vim.api.nvim_buf_set_lines(0, 0, 2, false, lines)
 end, {})
+--]]
 
 -- Bind the command to a key combination
 vim.api.nvim_set_keymap('n', '<leader>rm', ':UncommentJS<CR>', { noremap = true, silent = true })
